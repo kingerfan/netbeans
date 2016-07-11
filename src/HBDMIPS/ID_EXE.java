@@ -11,8 +11,10 @@ public class ID_EXE {
 	int PC;
 	int RS_DATA;
 	int RT_DATA;
-	int RD;
-	int RT;
+	public int RD;
+	public int RT;
+	public int RS;
+	public int forthPart;
         
         /**
          * 

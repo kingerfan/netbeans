@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JFileChooser;
 import javax.swing.JTable;
+
+import memory.Converts;
 import memory.SegmentDefragmenter;
 
 /**
@@ -20,679 +22,737 @@ import memory.SegmentDefragmenter;
  * @author Alirez
  */
 public class Main extends javax.swing.JFrame {
-    int count=0;
-    String filePath = null;
-    int lineOfInstructions;
-    Monitor monitor;
-    Computer computer;
-    /**
-     * Creates new form Main
-     */
-    public Main() {
-        initComponents();
-        assembleButton.setVisible(false);
-        runButton.setVisible(false);
-        nextIns.setVisible(false);
-        execAll.setVisible(false);
-        computer = new Computer();
+	int count=0;
+	String filePath = null;
+	int lineOfInstructions;
+	Monitor monitor;
+	Computer computer;
+	/**
+	 * Creates new form Main
+	 */
+	public Main() {
+		initComponents();
+		assembleButton.setVisible(false);
+		runButton.setVisible(false);
+		nextIns.setVisible(false);
+		execAll.setVisible(false);
+		computer = new Computer();
 
-        computer.fix_memory_table(memoryTable);
-        monitor = new Monitor(computer.aa.getMemory());
-        
-        for (int i = 0; i < mipsCode.getRowCount(); i++) {
-            mipsCode.setValueAt(Integer.toHexString(i*4), i, 0);
-        }
-        setStyle(mipsCode);
-        setStyle(program1);
-        setStyle(program2);
-        setStyle(program3);
-        loadprograms();
-}
+		computer.fix_memory_table(memoryTable);
+		monitor = new Monitor(computer.aa.getMemory());
 
-    private Main(int result,JFileChooser input) {
-        initComponents();
-        assembleButton.setVisible(false);
-        runButton.setVisible(false);
-        nextIns.setVisible(false);
-        execAll.setVisible(false);
-        computer = new Computer();
+		for (int i = 0; i < mipsCode.getRowCount(); i++) {
+			mipsCode.setValueAt(Integer.toHexString(i*4), i, 0);
+		}
+		setStyle(mipsCode);
+		setStyle(program1);
+		setStyle(program2);
+		setStyle(program3);
+		loadprograms();
+	}
 
-        computer.fix_memory_table(memoryTable);
-        monitor = new Monitor(computer.aa.getMemory());
-        
-        for (int i = 0; i < mipsCode.getRowCount(); i++) {
-            mipsCode.setValueAt(Integer.toHexString(i*4), i, 0);
-        }
-        setStyle(mipsCode);
-        setStyle(program1);
-        setStyle(program2);
-        setStyle(program3);
-        loadprograms();
-        filePath = input.getSelectedFile().getAbsolutePath();
-//            System.out.println(filePath);
-                String file = FileIO.Fread(filePath.replace("\\", "/"));
-                String[] line = file.split("\n");
-                for (int i = 0; i < line.length; i++) {
-                    DefaultTableModel model = (DefaultTableModel) mipsCode.getModel();
-                    model.addRow(new Object[]{"",line[i],"",""});
-                }
-                assembleButton.setVisible(true);
-                count++;
-    }
-    private void loadprograms(){
-        HashMap<Integer, SegmentDefragmenter> programs= computer.aa.getPrograms();
-//        System.out.println(programs.toString());
-        SegmentDefragmenter sd = programs.get(0);
-        ArrayList<String> starr = sd.getCode_seg();
-        int start_address =Integer.parseInt(sd.getCode_seg_start_address(), 16);
-        for (int i = 0; i < starr.size(); i++) {
-            DefaultTableModel model = (DefaultTableModel) program1.getModel();
-            model.addRow(new Object[]{Integer.toHexString(start_address+i*4),"",starr.get(i),""});
-        }
-        sd = programs.get(1);
-        starr = sd.getCode_seg();
-        start_address =Integer.parseInt(sd.getCode_seg_start_address(), 16);
-        for (int i = 0; i < starr.size(); i++) {
-            DefaultTableModel model = (DefaultTableModel) program2.getModel();
-            model.addRow(new Object[]{Integer.toHexString(start_address+i*4),"",starr.get(i),""});
-        }
-        sd = programs.get(2);
-        starr = sd.getCode_seg();
-        start_address =Integer.parseInt(sd.getCode_seg_start_address(), 16);
-        for (int i = 0; i < starr.size(); i++) {
-            DefaultTableModel model = (DefaultTableModel) program3.getModel();
-            model.addRow(new Object[]{Integer.toHexString(start_address+i*4),"",starr.get(i),""});
-        }
-        
-    }
-    
-    private void setStyle(JTable table){
-        table.setEnabled(false);
-        table.getColumn("Assembled").setMinWidth(180);
-        table.getColumn("Code").setMinWidth(170);
-        table.getColumn("Add.").setMaxWidth(90);
-    }
+	private Main(int result,JFileChooser input) {
+		initComponents();
+		assembleButton.setVisible(false);
+		runButton.setVisible(false);
+		nextIns.setVisible(false);
+		execAll.setVisible(false);
+		computer = new Computer();
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+		computer.fix_memory_table(memoryTable);
+		monitor = new Monitor(computer.aa.getMemory());
 
-        jPanel1 = new javax.swing.JPanel();
-        assemblyTab = new javax.swing.JTabbedPane();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        mipsCode =  new JTable(new DefaultTableModel(new Object[]{"Column1", "Column2","Column1", "Column2"},3));
-        jScrollPane8 = new javax.swing.JScrollPane();
-        program1 = new javax.swing.JTable();
-        jScrollPane9 = new javax.swing.JScrollPane();
-        program2 = new javax.swing.JTable();
-        jScrollPane10 = new javax.swing.JScrollPane();
-        program3 = new javax.swing.JTable();
-        assembleButton = new javax.swing.JButton();
-        monitors = new javax.swing.JTabbedPane();
-        memoryTableContainer = new javax.swing.JScrollPane();
-        memoryTable = new JTable(new DefaultTableModel(new Object[]{"Address", "Contain"},0));
-        jScrollPane3 = new javax.swing.JScrollPane();
-        Simonitor = new javax.swing.JTextArea();
-        Table = new javax.swing.JTabbedPane();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        regTable = new javax.swing.JTable();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        cp0Table = new javax.swing.JTable();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        cp1Table = new javax.swing.JTable();
-        jScrollPane11 = new javax.swing.JScrollPane();
-        otherTable = new javax.swing.JTable();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        dataCacheMon = new javax.swing.JTextArea();
-        runButton = new javax.swing.JButton();
-        nextIns = new javax.swing.JButton();
-        execAll = new javax.swing.JButton();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
-        jMenuItem3 = new javax.swing.JMenuItem();
-        jSeparator2 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem4 = new javax.swing.JMenuItem();
+		for (int i = 0; i < mipsCode.getRowCount(); i++) {
+			mipsCode.setValueAt(Integer.toHexString(i*4), i, 0);
+		}
+		setStyle(mipsCode);
+		setStyle(program1);
+		setStyle(program2);
+		setStyle(program3);
+		loadprograms();
+		filePath = input.getSelectedFile().getAbsolutePath();
+		//            System.out.println(filePath);
+		String file = FileIO.Fread(filePath.replace("\\", "/"));
+		String[] line = file.split("\n");
+		for (int i = 0; i < line.length; i++) {
+			DefaultTableModel model = (DefaultTableModel) mipsCode.getModel();
+			model.addRow(new Object[]{"",line[i],"",""});
+		}
+		assembleButton.setVisible(true);
+		count++;
+	}
+	private void loadprograms(){
+		HashMap<Integer, SegmentDefragmenter> programs= computer.aa.getPrograms();
+		//        System.out.println(programs.toString());
+		for(int i=0 ; i<programs.size() ; i++){
+			SegmentDefragmenter sd = programs.get(i);
+			ArrayList<String> starr = sd.getCode_seg();
+			int start_address =Integer.parseInt(sd.getCode_seg_start_address(), 16);
+			for (int j = 0; j < starr.size(); j++) {
+				DefaultTableModel model;
+				switch(i){
+					case 0:
+						model = (DefaultTableModel) program1.getModel();
+						break;
+					case 1:
+						model = (DefaultTableModel) program2.getModel();
+						break;
+					case 2:
+						model = (DefaultTableModel) program3.getModel();
+						break;
+					default:
+						model = (DefaultTableModel) program1.getModel(); // program1 should edit
+				}
+				model.addRow(new Object[]{Integer.toHexString(start_address+j*4),"",starr.get(j),""});
+			}
+		}
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Coffee MIPS");
+	}
 
-        mipsCode.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+	private void setStyle(JTable table){
+		table.setEnabled(false);
+		table.getColumn("Assembled").setMinWidth(180);
+		table.getColumn("Code").setMinWidth(170);
+		table.getColumn("Add.").setMaxWidth(90);
+	}
 
-            },
-            new String [] {
-                "Add.", "Code", "Assembled"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.String.class, java.lang.String.class
-            };
+	/**
+	 * This method is called from within the constructor to initialize the form.
+	 * WARNING: Do NOT modify this code. The content of this method is always
+	 * regenerated by the Form Editor.
+	 */
+	@SuppressWarnings("unchecked")
+	// <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+	private void initComponents() {
 
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        mipsCode.setToolTipText("");
-        mipsCode.setAutoscrolls(false);
-        mipsCode.setName(""); // NOI18N
-        mipsCode.setVerifyInputWhenFocusTarget(false);
-        jScrollPane6.setViewportView(mipsCode);
+		jPanel1 = new javax.swing.JPanel();
+		assemblyTab = new javax.swing.JTabbedPane();
+		jScrollPane6 = new javax.swing.JScrollPane();
+		mipsCode =  new JTable(new DefaultTableModel(new Object[]{"Column1", "Column2","Column1", "Column2"},3));
+		jScrollPane8 = new javax.swing.JScrollPane();
+		program1 = new javax.swing.JTable();
+		jScrollPane9 = new javax.swing.JScrollPane();
+		program2 = new javax.swing.JTable();
+		jScrollPane10 = new javax.swing.JScrollPane();
+		program3 = new javax.swing.JTable();
+		assembleButton = new javax.swing.JButton();
+		monitors = new javax.swing.JTabbedPane();
+		memoryTableContainer = new javax.swing.JScrollPane();
+		memoryTable = new JTable(new DefaultTableModel(new Object[]{"Address", "Contain"},0));
+		jScrollPane3 = new javax.swing.JScrollPane();
+		Simonitor = new javax.swing.JTextArea();
+		Table = new javax.swing.JTabbedPane();
+		jScrollPane1 = new javax.swing.JScrollPane();
+		regTable = new javax.swing.JTable();
+		jScrollPane4 = new javax.swing.JScrollPane();
+		cp0Table = new javax.swing.JTable();
+		jScrollPane5 = new javax.swing.JScrollPane();
+		cp1Table = new javax.swing.JTable();
+		jScrollPane11 = new javax.swing.JScrollPane();
+		otherTable = new javax.swing.JTable();
+		jScrollPane2 = new javax.swing.JScrollPane();
+		dataCacheMon = new javax.swing.JTextArea();
+		runButton = new javax.swing.JButton();
+		nextIns = new javax.swing.JButton();
+		execAll = new javax.swing.JButton();
+		jMenuBar1 = new javax.swing.JMenuBar();
+		jMenu1 = new javax.swing.JMenu();
+		jMenuItem1 = new javax.swing.JMenuItem();
+		jSeparator1 = new javax.swing.JPopupMenu.Separator();
+		jMenuItem2 = new javax.swing.JMenuItem();
+		jMenu2 = new javax.swing.JMenu();
+		jMenuItem3 = new javax.swing.JMenuItem();
+		jSeparator2 = new javax.swing.JPopupMenu.Separator();
+		jMenuItem4 = new javax.swing.JMenuItem();
 
-        assemblyTab.addTab("Code", jScrollPane6);
+		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+		setTitle("Coffee MIPS");
 
-        program1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+		mipsCode.setModel(new javax.swing.table.DefaultTableModel(
+				new Object [][] {
 
-            },
-            new String [] {
-                "Add.", "Code", "Assembled", "C"
-            }
-        ));
-        jScrollPane8.setViewportView(program1);
+				},
+				new String [] {
+						"Add.", "Code", "Assembled"
+				}
+				) {
+			Class[] types = new Class [] {
+					java.lang.Object.class, java.lang.String.class, java.lang.String.class
+			};
 
-        assemblyTab.addTab("Program 1", jScrollPane8);
+			public Class getColumnClass(int columnIndex) {
+				return types [columnIndex];
+			}
+		});
+		mipsCode.setToolTipText("");
+		mipsCode.setAutoscrolls(false);
+		mipsCode.setName(""); // NOI18N
+		mipsCode.setVerifyInputWhenFocusTarget(false);
+		jScrollPane6.setViewportView(mipsCode);
 
-        program2.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+		assemblyTab.addTab("Code", jScrollPane6);
 
-            },
-            new String [] {
-                "Add.", "Code", "Assembled", "C"
-            }
-        ));
-        jScrollPane9.setViewportView(program2);
+		program1.setModel(new javax.swing.table.DefaultTableModel(
+				new Object [][] {
 
-        assemblyTab.addTab("Program 2", jScrollPane9);
+				},
+				new String [] {
+						"Add.", "Code", "Assembled", "C"
+				}
+				));
+		jScrollPane8.setViewportView(program1);
 
-        program3.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+		assemblyTab.addTab("Program 1", jScrollPane8);
 
-            },
-            new String [] {
-                "Add.", "Code", "Assembled", "C"
-            }
-        ));
-        jScrollPane10.setViewportView(program3);
+		program2.setModel(new javax.swing.table.DefaultTableModel(
+				new Object [][] {
 
-        assemblyTab.addTab("Program 3", jScrollPane10);
+				},
+				new String [] {
+						"Add.", "Code", "Assembled", "C"
+				}
+				));
+		jScrollPane9.setViewportView(program2);
 
-        assembleButton.setText("Assemble");
-        assembleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                assembleButtonActionPerformed(evt);
-            }
-        });
+		assemblyTab.addTab("Program 2", jScrollPane9);
 
-        memoryTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+		program3.setModel(new javax.swing.table.DefaultTableModel(
+				new Object [][] {
 
-            },
-            new String [] {
-                "Address", "Content"
-            }
-        ));
-        memoryTableContainer.setViewportView(memoryTable);
+				},
+				new String [] {
+						"Add.", "Code", "Assembled", "C"
+				}
+				));
+		jScrollPane10.setViewportView(program3);
 
-        monitors.addTab("Memory", memoryTableContainer);
+		assemblyTab.addTab("Program 3", jScrollPane10);
 
-        Simonitor.setEditable(false);
-        Simonitor.setColumns(80);
-        Simonitor.setRows(25);
-        Simonitor.setWrapStyleWord(true);
-        Simonitor.setFocusable(false);
-        jScrollPane3.setViewportView(Simonitor);
+		assembleButton.setText("Assemble");
+		assembleButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				assembleButtonActionPerformed(evt);
+			}
+		});
 
-        monitors.addTab("Monitor", jScrollPane3);
+		memoryTable.setModel(new javax.swing.table.DefaultTableModel(
+				new Object [][] {
 
-        regTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"0 zero", null, "8   t0", null, "16 s0", null, "24 t8", null},
-                {"1*at", null, "9   t1", null, "17 s1", null, "25 t9", null},
-                {"2 v0", null, "10 t2", null, "18 s2", null, "26*k0", null},
-                {"3 v1", null, "11 t3", null, "19 s3", null, "27*k1", null},
-                {"4 a0", null, "12 t4", null, "20 s4", null, "28 gp", null},
-                {"5 a1", null, "13 t5", null, "21 s5", null, "29 sp", null},
-                {"6 a2", null, "14 t6", null, "22 s6", null, "30 fp", null},
-                {"7 a3", null, "15 t7", null, "23 s7", null, "31 ra", null}
-            },
-            new String [] {
-                "Reg", "Value", "Reg", "Value", "Reg", "Value", "Reg", "Value"
-            }
-        ));
-        regTable.setRequestFocusEnabled(false);
-        regTable.setRowSelectionAllowed(false);
-        jScrollPane1.setViewportView(regTable);
+				},
+				new String [] {
+						"Address", "Content"
+				}
+				));
+		memoryTableContainer.setViewportView(memoryTable);
 
-        Table.addTab("Registers", jScrollPane1);
+		monitors.addTab("Memory", memoryTableContainer);
 
-        cp0Table.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"0 Context", null, "8   BadVAddr", null, "16 Config", null, "24 DEPC", null},
-                {"1 Random", null, "9   Count", null, "17 LLAddr", null, "25 PerfCtl", null},
-                {"2 EntryLo0", null, "10 EntryHi", null, "18 WatchLo", null, "26 ECC", null},
-                {"3 EntryLo1", null, "11 Compare", null, "19 WatchHi", null, "27 CacheErr", null},
-                {"4 Context", null, "12 SR", null, "20", null, "28 TagLo", null},
-                {"5 PageMask", null, "13 Cause", null, "21 ", null, "29 TagHi", null},
-                {"6 Wired", null, "14 EPC", null, "22 ", null, "30 ErrorEPC", null},
-                {"7 HWREna", null, "15 PRId", null, "23 Debug", null, "31 DESAVE", null}
-            },
-            new String [] {
-                "Reg", "Value", "Reg", "Value", "Reg", "Value", "Reg", "Value"
-            }
-        ));
-        jScrollPane4.setViewportView(cp0Table);
+		Simonitor.setEditable(false);
+		Simonitor.setColumns(80);
+		Simonitor.setRows(25);
+		Simonitor.setWrapStyleWord(true);
+		Simonitor.setFocusable(false);
+		jScrollPane3.setViewportView(Simonitor);
 
-        Table.addTab("CP0", jScrollPane4);
+		monitors.addTab("Monitor", jScrollPane3);
 
-        cp1Table.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"0 f0", null, "8   f8", null, "16 f16", null, "24 f24", null},
-                {"1 f1", null, "9   f9", null, "17 f17", null, "25 f25", null},
-                {"2 f2", null, "10 f10", null, "18 f18", null, "26 f26", null},
-                {"3 f3", null, "11 f11", null, "19 f19", null, "27 f27", null},
-                {"4 f4", null, "12 f12", null, "20 f20", null, "28 f28", null},
-                {"5 f5", null, "13 f13", null, "21 f21", null, "29 f29", null},
-                {"6 f6", null, "14 f14", null, "22 f22", null, "30 f30", null},
-                {"7 f7", null, "15 f15", null, "23 f23", null, "31 f31", null}
-            },
-            new String [] {
-                "Reg", "Value", "Reg", "Value", "Reg", "Value", "Reg", "Value"
-            }
-        ));
-        jScrollPane5.setViewportView(cp1Table);
+		regTable.setModel(new javax.swing.table.DefaultTableModel(
+				new Object [][] {
+					{"0 zero", null, "8   t0", null, "16 s0", null, "24 t8", null},
+					{"1*at", null, "9   t1", null, "17 s1", null, "25 t9", null},
+					{"2 v0", null, "10 t2", null, "18 s2", null, "26*k0", null},
+					{"3 v1", null, "11 t3", null, "19 s3", null, "27*k1", null},
+					{"4 a0", null, "12 t4", null, "20 s4", null, "28 gp", null},
+					{"5 a1", null, "13 t5", null, "21 s5", null, "29 sp", null},
+					{"6 a2", null, "14 t6", null, "22 s6", null, "30 fp", null},
+					{"7 a3", null, "15 t7", null, "23 s7", null, "31 ra", null}
+				},
+				new String [] {
+						"Reg", "Value", "Reg", "Value", "Reg", "Value", "Reg", "Value"
+				}
+				));
+		regTable.setRequestFocusEnabled(false);
+		regTable.setRowSelectionAllowed(false);
+		jScrollPane1.setViewportView(regTable);
 
-        Table.addTab("CP1", jScrollPane5);
+		Table.addTab("Registers", jScrollPane1);
 
-        otherTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"PC", null, "", null, "", null, "", null},
-                {"hi", null, "", null, "", null, "", null},
-                {"lo", null, "", null, "", null, "", null},
-                {"", null, "", null, "", null, "", null},
-                {"", null, "", null, "", null, "", null},
-                {"", null, "", null, "", null, "", null},
-                {"", null, "", null, "", null, "", null},
-                {"", null, "", null, "", null, "", null}
-            },
-            new String [] {
-                "Reg", "Value", "Reg", "Value", "Reg", "Value", "Reg", "Value"
-            }
-        ));
-        jScrollPane11.setViewportView(otherTable);
+		cp0Table.setModel(new javax.swing.table.DefaultTableModel(
+				new Object [][] {
+					{"0 Context", null, "8   BadVAddr", null, "16 Config", null, "24 DEPC", null},
+					{"1 Random", null, "9   Count", null, "17 LLAddr", null, "25 PerfCtl", null},
+					{"2 EntryLo0", null, "10 EntryHi", null, "18 WatchLo", null, "26 ECC", null},
+					{"3 EntryLo1", null, "11 Compare", null, "19 WatchHi", null, "27 CacheErr", null},
+					{"4 Context", null, "12 SR", null, "20", null, "28 TagLo", null},
+					{"5 PageMask", null, "13 Cause", null, "21 ", null, "29 TagHi", null},
+					{"6 Wired", null, "14 EPC", null, "22 ", null, "30 ErrorEPC", null},
+					{"7 HWREna", null, "15 PRId", null, "23 Debug", null, "31 DESAVE", null}
+				},
+				new String [] {
+						"Reg", "Value", "Reg", "Value", "Reg", "Value", "Reg", "Value"
+				}
+				));
+		jScrollPane4.setViewportView(cp0Table);
 
-        Table.addTab("Other", jScrollPane11);
+		Table.addTab("CP0", jScrollPane4);
 
-        dataCacheMon.setColumns(20);
-        dataCacheMon.setRows(5);
-        jScrollPane2.setViewportView(dataCacheMon);
+		cp1Table.setModel(new javax.swing.table.DefaultTableModel(
+				new Object [][] {
+					{"f0", null, "f8", null, "f16", null, "f24", null},
+					{"f1", null, "f9", null, "f17", null, "f25", null},
+					{"f2", null, "f10", null, "f18", null, "f26", null},
+					{"f3", null, "f11", null, "f19", null, "f27", null},
+					{"f4", null, "f12", null, "f20", null, "f28", null},
+					{"f5", null, "f13", null, "f21", null, "f29", null},
+					{"f6", null, "f14", null, "f22", null, "f30", null},
+					{"f7", null, "f15", null, "f23", null, "f31", null}
+				},
+				new String [] {
+						"Reg", "Value", "Reg", "Value", "Reg", "Value", "Reg", "Value"
+				}
+				));
+		jScrollPane5.setViewportView(cp1Table);
 
-        Table.addTab("Data Cache", jScrollPane2);
+		Table.addTab("CP1", jScrollPane5);
 
-        runButton.setText("Run");
-        runButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                runButtonActionPerformed(evt);
-            }
-        });
+		otherTable.setModel(new javax.swing.table.DefaultTableModel(
+				new Object [][] {
+					{"PC", null, "", null, "", null, "", null},
+					{"hi", null, "", null, "", null, "", null},
+					{"lo", null, "", null, "", null, "", null},
+					{"", null, "", null, "", null, "", null},
+					{"", null, "", null, "", null, "", null},
+					{"", null, "", null, "", null, "", null},
+					{"", null, "", null, "", null, "", null},
+					{"", null, "", null, "", null, "", null}
+				},
+				new String [] {
+						"Reg", "Value", "Reg", "Value", "Reg", "Value", "Reg", "Value"
+				}
+				));
+		jScrollPane11.setViewportView(otherTable);
 
-        nextIns.setText("Next Step");
-        nextIns.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nextInsActionPerformed(evt);
-            }
-        });
+		Table.addTab("Other", jScrollPane11);
 
-        execAll.setText("Execute All");
-        execAll.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                execAllActionPerformed(evt);
-            }
-        });
+		dataCacheMon.setColumns(20);
+		dataCacheMon.setRows(5);
+		jScrollPane2.setViewportView(dataCacheMon);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(assembleButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(runButton, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(nextIns)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(execAll))
-                    .addComponent(assemblyTab, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(Table)
-                    .addComponent(monitors, javax.swing.GroupLayout.DEFAULT_SIZE, 744, Short.MAX_VALUE))
-                .addContainerGap(31, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addComponent(assemblyTab)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(runButton)
-                    .addComponent(nextIns)
-                    .addComponent(execAll)
-                    .addComponent(assembleButton))
-                .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(monitors, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Table, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
+		Table.addTab("Data Cache", jScrollPane2);
 
-        jMenu1.setText("File");
+		runButton.setText("Run");
+		runButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				runButtonActionPerformed(evt);
+			}
+		});
 
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem1.setText("Open File...");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jMenuItem1);
-        jMenu1.add(jSeparator1);
+		nextIns.setText("Next Step");
+		nextIns.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				nextInsActionPerformed(evt);
+			}
+		});
 
-        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem2.setText("Exit");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jMenuItem2);
+		execAll.setText("Execute All");
+		execAll.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				execAllActionPerformed(evt);
+			}
+		});
 
-        jMenuBar1.add(jMenu1);
+		javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+		jPanel1.setLayout(jPanel1Layout);
+		jPanel1Layout.setHorizontalGroup(
+				jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(jPanel1Layout.createSequentialGroup()
+						.addContainerGap()
+						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+								.addGroup(jPanel1Layout.createSequentialGroup()
+										.addComponent(assembleButton)
+										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(runButton, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(nextIns)
+										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(execAll))
+								.addComponent(assemblyTab, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+								.addComponent(Table)
+								.addComponent(monitors, javax.swing.GroupLayout.DEFAULT_SIZE, 744, Short.MAX_VALUE))
+						.addContainerGap(31, Short.MAX_VALUE))
+				);
+		jPanel1Layout.setVerticalGroup(
+				jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+						.addComponent(assemblyTab)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+								.addComponent(runButton)
+								.addComponent(nextIns)
+								.addComponent(execAll)
+								.addComponent(assembleButton))
+						.addContainerGap())
+				.addGroup(jPanel1Layout.createSequentialGroup()
+						.addContainerGap()
+						.addComponent(monitors, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(Table, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addGap(0, 0, Short.MAX_VALUE))
+				);
 
-        jMenu2.setText("Help");
+		jMenu1.setText("File");
 
-        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
-        jMenuItem3.setText("Document");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
-            }
-        });
-        jMenu2.add(jMenuItem3);
-        jMenu2.add(jSeparator2);
+		jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+		jMenuItem1.setText("Open File...");
+		jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jMenuItem1ActionPerformed(evt);
+			}
+		});
+		jMenu1.add(jMenuItem1);
+		jMenu1.add(jSeparator1);
 
-        jMenuItem4.setText("About");
-        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem4ActionPerformed(evt);
-            }
-        });
-        jMenu2.add(jMenuItem4);
+		jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+		jMenuItem2.setText("Exit");
+		jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jMenuItem2ActionPerformed(evt);
+			}
+		});
+		jMenu1.add(jMenuItem2);
 
-        jMenuBar1.add(jMenu2);
+		jMenuBar1.add(jMenu1);
 
-        setJMenuBar(jMenuBar1);
+		jMenu2.setText("Help");
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
+		jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
+		jMenuItem3.setText("Document");
+		jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jMenuItem3ActionPerformed(evt);
+			}
+		});
+		jMenu2.add(jMenuItem3);
+		jMenu2.add(jSeparator2);
 
-        pack();
-        setLocationRelativeTo(null);
-    }// </editor-fold>//GEN-END:initComponents
+		jMenuItem4.setText("About");
+		jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				jMenuItem4ActionPerformed(evt);
+			}
+		});
+		jMenu2.add(jMenuItem4);
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        JFileChooser input = new JFileChooser();
-        int result = input.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            if(count == 0){
-                filePath = input.getSelectedFile().getAbsolutePath();
-//            System.out.println(filePath);
-                String file = FileIO.Fread(filePath.replace("\\", "/"));
-                String[] line = file.split("\n");
-                for (int i = 0; i < line.length; i++) {
-                    DefaultTableModel model = (DefaultTableModel) mipsCode.getModel();
-                    model.addRow(new Object[]{"",line[i],"",""});
-                }
-                assembleButton.setVisible(true);
-                count++;
-            }else{
-                Main new_main = new Main(result,input);
-                new_main.setVisible(true);
-                this.setVisible(false);
-            }
-            
-        } else if (result == JFileChooser.CANCEL_OPTION) {
-            System.out.println("Cancel was selected");
-        }
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+		jMenuBar1.add(jMenu2);
 
-    private void execAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_execAllActionPerformed
-        while (computer.currentLineOfInstructions < computer.lineOfInstructions) {
-            computer.runSingleSycle();
-        }
-        computer.fix_memory_table(memoryTable);
-        computer.Fix_regfile_table(regTable);
-        dataCacheMon.setText(computer.get_cache_mem());
-        execAll.setVisible(false);
-        runButton.setVisible(true);
-        nextIns.setVisible(false);
-    }//GEN-LAST:event_execAllActionPerformed
-    
-    private void selectTrueInstruction(){
-        int pc = (computer.getPC())*4; 
-            mipsCode.clearSelection();
-            program1.clearSelection();
-            program2.clearSelection();
-            program3.clearSelection();
-            for(int i=0;i<mipsCode.getRowCount();i++){
-                if(!((String) mipsCode.getValueAt(i, 0)).equals(""))
-                if(Integer.parseInt((String) mipsCode.getValueAt(i, 0),16) == pc)
-                {
-                    assemblyTab.setSelectedIndex(0);
-                    mipsCode.setRowSelectionInterval(i, i);
-                }
-            }
-            for(int i=0;i<program1.getRowCount();i++){
-                if(!((String) program1.getValueAt(i, 0)).equals(""))
-                if(Integer.parseInt((String) program1.getValueAt(i, 0),16) == pc)
-                {
-                    assemblyTab.setSelectedIndex(1);
-                    program1.setRowSelectionInterval(i, i);
-                }
-            }
-            for(int i=0;i<program2.getRowCount();i++){
-                if(!((String) program2.getValueAt(i, 0)).equals(""))
-                if(Integer.parseInt((String) program2.getValueAt(i, 0),16) == pc)
-                {
-                    assemblyTab.setSelectedIndex(2);
-                    program2.setRowSelectionInterval(i, i);
-                }
-            }
-            for(int i=0;i<program3.getRowCount();i++){
-                if(!((String) program3.getValueAt(i, 0)).equals(""))
-                if(Integer.parseInt((String) program3.getValueAt(i, 0),16) == pc)
-                {
-                    assemblyTab.setSelectedIndex(3);
-                    program3.setRowSelectionInterval(i, i);
-                }
-            }      
-    }
-    
-    private void nextInsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextInsActionPerformed
-        if (computer.runSingleSycle()) {
-            computer.fix_memory_table(memoryTable);
-            Simonitor.setText(monitor.toString());
-            selectTrueInstruction();
-            computer.Fix_regfile_table(regTable);
-            computer.update_other_table(otherTable);
-            dataCacheMon.setText(computer.get_cache_mem());
-        } else {
-            nextIns.setVisible(false);
-            runButton.setVisible(true);
-        }
-    }//GEN-LAST:event_nextInsActionPerformed
+		setJMenuBar(jMenuBar1);
 
-    private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
-        if (computer.isRunable()) {
-            
-            computer.run_init(filePath,lineOfInstructions);
-            computer.Fix_regfile_table(regTable);
-            runButton.setVisible(false);
-            nextIns.setVisible(true);
-            execAll.setVisible(true);
-        }
-    }//GEN-LAST:event_runButtonActionPerformed
+		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+		getContentPane().setLayout(layout);
+		layout.setHorizontalGroup(
+				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup()
+						.addContainerGap()
+						.addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+				);
+		layout.setVerticalGroup(
+				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup()
+						.addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addGap(0, 0, Short.MAX_VALUE))
+				);
 
-    private void assembleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assembleButtonActionPerformed
-        if (!filePath.isEmpty() && filePath != null) {
-            Assembler assemble = new Assembler();
-            assemble.setModeBit(true);
-            HashMap<Integer, Instruction> assembled = new HashMap<Integer, Instruction>(assemble.assembleFile(filePath));            
-            assemble.setModeBit(false);
-            this.lineOfInstructions = assembled.size();
-            int code_number=0;
-            for (int i = 0; i < mipsCode.getRowCount(); i++) {
-                String code = (String)mipsCode.getValueAt(i, 1);
-                try{
-	                if(code.indexOf(':')==-1){
-	                    mipsCode.setValueAt(assembled.get(code_number).getAddress(), i, 0);
-	                    mipsCode.setValueAt(assembled.get(code_number).getInstruction(), i, 2);
-	                    code_number++;   
-	                }
-                }
-                catch(Exception e)
-                {
-                	System.out.println("there was an error in:");
-                	System.out.println(code);
-                	throw e;
-                }
-                             
-            }
-            runButton.setVisible(true);
-            nextIns.setVisible(false);
-        }
-    }//GEN-LAST:event_assembleButtonActionPerformed
+		pack();
+		setLocationRelativeTo(null);
+	}// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        // TODO add your handling code here:
-        System.exit(0);
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+	private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+		JFileChooser input = new JFileChooser();
+		int result = input.showOpenDialog(this);
+		if (result == JFileChooser.APPROVE_OPTION) {
+			if(count == 0){
+				filePath = input.getSelectedFile().getAbsolutePath();
+				//            System.out.println(filePath);
+				String file = FileIO.Fread(filePath.replace("\\", "/"));
+				String[] line = file.split("\n");
+				for (int i = 0; i < line.length; i++) {
+					DefaultTableModel model = (DefaultTableModel) mipsCode.getModel();
+					model.addRow(new Object[]{"",line[i],"",""});
+				}
+				assembleButton.setVisible(true);
+				count++;
+			}else{
+				Main new_main = new Main(result,input);
+				new_main.setVisible(true);
+				this.setVisible(false);
+			}
 
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        // TODO add your handling code here:
-       
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
+		} else if (result == JFileChooser.CANCEL_OPTION) {
+			System.out.println("Cancel was selected");
+		}
+	}//GEN-LAST:event_jMenuItem1ActionPerformed
 
-    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        // TODO add your handling code here:
-        about about_UI = new about();
-        about_UI.parent = this;
-        about_UI.setVisible(true);
-    }//GEN-LAST:event_jMenuItem4ActionPerformed
+	private void execAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_execAllActionPerformed
+		while (computer.currentLineOfInstructions < computer.lineOfInstructions) {
+			computer.runSingleSycle();
+		}
+		computer.fix_memory_table(memoryTable);
+		computer.Fix_regfile_table(regTable);
+//		dataCacheMon.setText(computer.get_cache_mem());
+		execAll.setVisible(false);
+		runButton.setVisible(true);
+		nextIns.setVisible(false);
+		setFloatRegs();
+	}//GEN-LAST:event_execAllActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
+	private void selectTrueInstruction(){
+		int pc = (computer.getPC())*4; 
+		mipsCode.clearSelection();
+		program1.clearSelection();
+		program2.clearSelection();
+		program3.clearSelection();
+		for(int i=0;i<mipsCode.getRowCount();i++){
+			if(mipsCode.getValueAt(i, 0)==null)
+				continue;
+			if(!((String) mipsCode.getValueAt(i, 0)).equals(""))
+				if(Integer.parseInt((String) mipsCode.getValueAt(i, 0),16) == pc)
+				{
+					assemblyTab.setSelectedIndex(0);
+					mipsCode.setRowSelectionInterval(i, i);
+				}
+		}
+		for(int i=0;i<program1.getRowCount();i++){
+			if(program1.getValueAt(i, 0)==null)
+				continue;
+			if(!((String) program1.getValueAt(i, 0)).equals(""))
+				if(Integer.parseInt((String) program1.getValueAt(i, 0),16) == pc)
+				{
+					assemblyTab.setSelectedIndex(1);
+					program1.setRowSelectionInterval(i, i);
+				}
+		}
+		for(int i=0;i<program2.getRowCount();i++){
+			if(program2.getValueAt(i, 0)==null)
+				continue;
+			if(!((String) program2.getValueAt(i, 0)).equals(""))
+				if(Integer.parseInt((String) program2.getValueAt(i, 0),16) == pc)
+				{
+					assemblyTab.setSelectedIndex(2);
+					program2.setRowSelectionInterval(i, i);
+				}
+		}
+		for(int i=0;i<program3.getRowCount();i++){
+			if(program3.getValueAt(i, 0)==null)
+				continue;
+			if(!((String) program3.getValueAt(i, 0)).equals(""))
+				if(Integer.parseInt((String) program3.getValueAt(i, 0),16) == pc)
+				{
+					assemblyTab.setSelectedIndex(3);
+					program3.setRowSelectionInterval(i, i);
+				}
+		}      
+	}
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Main().setVisible(true);
-            }
-        });
-    }
+	private void nextInsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextInsActionPerformed
+		if (computer.runSingleSycle()) {
+			computer.fix_memory_table(memoryTable);
+			Simonitor.setText(monitor.toString());
+			selectTrueInstruction();
+			computer.Fix_regfile_table(regTable);
+			computer.update_other_table(otherTable);
+//			dataCacheMon.setText(computer.get_cache_mem());
+		} else {
+			nextIns.setVisible(false);
+			runButton.setVisible(true);
+		}
+		setFloatRegs();
+	}//GEN-LAST:event_nextInsActionPerformed
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea Simonitor;
-    private javax.swing.JTabbedPane Table;
-    private javax.swing.JButton assembleButton;
-    private javax.swing.JTabbedPane assemblyTab;
-    private javax.swing.JTable cp0Table;
-    private javax.swing.JTable cp1Table;
-    private javax.swing.JTextArea dataCacheMon;
-    private javax.swing.JButton execAll;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane10;
-    private javax.swing.JScrollPane jScrollPane11;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JScrollPane jScrollPane8;
-    private javax.swing.JScrollPane jScrollPane9;
-    private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JPopupMenu.Separator jSeparator2;
-    private javax.swing.JTable memoryTable;
-    private javax.swing.JScrollPane memoryTableContainer;
-    private javax.swing.JTable mipsCode;
-    private javax.swing.JTabbedPane monitors;
-    private javax.swing.JButton nextIns;
-    private javax.swing.JTable otherTable;
-    private javax.swing.JTable program1;
-    private javax.swing.JTable program2;
-    private javax.swing.JTable program3;
-    private javax.swing.JTable regTable;
-    private javax.swing.JButton runButton;
-    // End of variables declaration//GEN-END:variables
+	private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
+		if (computer.isRunable()) {
+			computer.run_init(filePath,lineOfInstructions);
+			computer.Fix_regfile_table(regTable);
+			selectTrueInstruction();
+			runButton.setVisible(false);
+			nextIns.setVisible(true);
+			execAll.setVisible(true);
+			setFloatRegs();
+		}
+	}//GEN-LAST:event_runButtonActionPerformed
+
+
+	private void assembleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assembleButtonActionPerformed
+		if (!filePath.isEmpty() && filePath != null) {
+
+			SegmentDefragmenter sd = new SegmentDefragmenter(filePath);
+			HashMap<Integer, Instruction> assembled = sd.Code;
+			HashMap<Integer, String> code = sd.notAssembledCode;
+//			Assembler assemble = new Assembler();
+//			assemble.setModeBit(true);
+//			HashMap<Integer, Instruction> assembled = new HashMap<Integer, Instruction>(assemble.assembleFile(filePath));
+//			assemble.setModeBit(false);
+//
+//
+//
+			this.lineOfInstructions = assembled.size();
+			int code_number=0;
+			int i = 0;
+			for (i = 0; i < lineOfInstructions ; i++) {
+//				String code = (String)mipsCode.getValueAt(i, 1);
+				try{
+					mipsCode.setValueAt(assembled.get(code_number).getAddress(), i, 0);
+					mipsCode.setValueAt(code.get(i), i, 1);
+					mipsCode.setValueAt(assembled.get(code_number).getInstruction(), i, 2);
+					code_number++;
+				}
+				catch(Exception e)
+				{
+					System.out.println("there was an error in:");
+					System.out.println(assembled.get(code_number).getInstruction());
+					throw e;
+				}
+			}
+			while(true){
+				try{
+					mipsCode.setValueAt(null, i, 0);
+					mipsCode.setValueAt(null, i, 1);
+					mipsCode.setValueAt(null, i, 2);
+				}catch(Exception e){
+					break;
+				}
+				i++;
+			}
+			runButton.setVisible(true);
+			nextIns.setVisible(false);
+		}
+	}//GEN-LAST:event_assembleButtonActionPerformed
+
+	private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+		// TODO add your handling code here:
+		System.exit(0);
+	}//GEN-LAST:event_jMenuItem2ActionPerformed
+
+	private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+		// TODO add your handling code here:
+
+	}//GEN-LAST:event_jMenuItem3ActionPerformed
+
+	private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+		// TODO add your handling code here:
+		about about_UI = new about();
+		about_UI.parent = this;
+		about_UI.setVisible(true);
+	}//GEN-LAST:event_jMenuItem4ActionPerformed
+
+	public void setCp1Table(Object[] regs){
+		cp1Table.setModel(new javax.swing.table.DefaultTableModel(
+				new Object [][] {
+						{"f0", regs[0], "f8", regs[8], "f16", regs[16], "f24", regs[24]},
+						{"f1", regs[1], "f9", regs[9], "f17", regs[17], "f25", regs[25]},
+						{"f2", regs[2], "f10", regs[10], "f18", regs[18], "f26", regs[26]},
+						{"f3", regs[3], "f11", regs[11], "f19", regs[19], "f27", regs[27]},
+						{"f4", regs[4], "f12", regs[12], "f20", regs[20], "f28", regs[28]},
+						{"f5", regs[5], "f13", regs[13], "f21", regs[21], "f29", regs[29]},
+						{"f6", regs[6], "f14", regs[14], "f22", regs[22], "f30", regs[30]},
+						{"f7", regs[7], "f15", regs[15], "f23", regs[23], "f31", regs[31]}
+				},
+				new String [] {
+						"Reg", "Value", "Reg", "Value", "Reg", "Value", "Reg", "Value"
+				}
+		));
+
+	}
+
+	public void setFloatRegs(){
+		Float[] tmp = new Float[32];
+		for(int i=0 ; i<32 ; i++){
+			if(computer.cp1.reg.get(i,true)!=null)
+				tmp[i] = (float)Converts.singlePToFloat(computer.cp1.reg.get(i,true));
+			else
+				tmp[i] = (float)0;
+		}
+		setCp1Table(tmp);
+	}
+	/**
+	 * @param args the command line arguments
+	 */
+	public static void main(String args[]) {
+		/* Set the Nimbus look and feel */
+		//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+		/* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+		 * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+		 */
+		try {
+			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+				if ("Nimbus".equals(info.getName())) {
+					javax.swing.UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		} catch (ClassNotFoundException ex) {
+			java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		} catch (InstantiationException ex) {
+			java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		} catch (IllegalAccessException ex) {
+			java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
+			java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		}
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+		//</editor-fold>
+
+		/* Create and display the form */
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				new Main().setVisible(true);
+			}
+		});
+	}
+
+	// Variables declaration - do not modify//GEN-BEGIN:variables
+	private javax.swing.JTextArea Simonitor;
+	private javax.swing.JTabbedPane Table;
+	private javax.swing.JButton assembleButton;
+	private javax.swing.JTabbedPane assemblyTab;
+	private javax.swing.JTable cp0Table;
+	private javax.swing.JTable cp1Table;
+	private javax.swing.JTextArea dataCacheMon;
+	private javax.swing.JButton execAll;
+	private javax.swing.JMenu jMenu1;
+	private javax.swing.JMenu jMenu2;
+	private javax.swing.JMenuBar jMenuBar1;
+	private javax.swing.JMenuItem jMenuItem1;
+	private javax.swing.JMenuItem jMenuItem2;
+	private javax.swing.JMenuItem jMenuItem3;
+	private javax.swing.JMenuItem jMenuItem4;
+	private javax.swing.JPanel jPanel1;
+	private javax.swing.JScrollPane jScrollPane1;
+	private javax.swing.JScrollPane jScrollPane10;
+	private javax.swing.JScrollPane jScrollPane11;
+	private javax.swing.JScrollPane jScrollPane2;
+	private javax.swing.JScrollPane jScrollPane3;
+	private javax.swing.JScrollPane jScrollPane4;
+	private javax.swing.JScrollPane jScrollPane5;
+	private javax.swing.JScrollPane jScrollPane6;
+	private javax.swing.JScrollPane jScrollPane8;
+	private javax.swing.JScrollPane jScrollPane9;
+	private javax.swing.JPopupMenu.Separator jSeparator1;
+	private javax.swing.JPopupMenu.Separator jSeparator2;
+	private javax.swing.JTable memoryTable;
+	private javax.swing.JScrollPane memoryTableContainer;
+	private javax.swing.JTable mipsCode;
+	private javax.swing.JTabbedPane monitors;
+	private javax.swing.JButton nextIns;
+	private javax.swing.JTable otherTable;
+	private javax.swing.JTable program1;
+	private javax.swing.JTable program2;
+	private javax.swing.JTable program3;
+	private javax.swing.JTable regTable;
+	private javax.swing.JButton runButton;
+	// End of variables declaration//GEN-END:variables
 }

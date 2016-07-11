@@ -4,6 +4,7 @@ package Assembler;
 //new MIPS assembler
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.HashMap;
 
@@ -18,8 +19,12 @@ public class Assembler {
     private HashMap<String, String> instructionCodes = new HashMap<String, String>();
     private HashMap<String, instructionParser> instructions = new HashMap<String, instructionParser>();
     private HashMap<String, String> registers = new HashMap<String, String>();
+    private HashMap<String, String> fsRegisters = new HashMap<String, String>();
+    private HashMap<String, String> fdRegisters = new HashMap<String, String>();
+
     private HashMap<String, Integer> labels = new HashMap<String, Integer>();
     private HashMap<Integer, Instruction> assembled = new HashMap<Integer, Instruction>();
+    public HashMap<Integer , String> notAssembled = new HashMap<>();
 
     private void initInstructionCodes() {
         // R-Type Instructions
@@ -48,6 +53,31 @@ public class Assembler {
 		
 		// SysCall Instruction
         instructionCodes.put("syscall", "001100");
+
+        // FP Instructions
+        instructionCodes.put("add.s", "000000");
+        instructionCodes.put("add.d", "000000");
+        instructionCodes.put("sub.s", "000001");
+        instructionCodes.put("sub.d", "000001");
+        instructionCodes.put("mul.s", "000010");
+        instructionCodes.put("mul.d", "000010");
+        instructionCodes.put("div.s", "000011");
+        instructionCodes.put("div.d", "000011");
+
+        // FP branch
+        instructionCodes.put("c.eq.s", "110010");
+        instructionCodes.put("c.eq.d", "110010");
+        instructionCodes.put("c.lt.s", "111100");
+        instructionCodes.put("c.lt.d", "111100");
+        instructionCodes.put("c.le.s", "111110");
+        instructionCodes.put("c.le.d", "111110");
+
+        // FP load & store
+        instructionCodes.put("lwc1", "110001");
+        instructionCodes.put("ldc1", "110101");
+        instructionCodes.put("swc1", "111001");
+        instructionCodes.put("sdc1", "111101");
+
     }
 
     private void initInstructions() {
@@ -77,6 +107,34 @@ public class Assembler {
 		
 		// SysCall Instruction
         instructions.put("syscall", instructionSysCall);
+
+        // FP Instructions
+        instructions.put("add.s", instructionF_std);
+        instructions.put("add.d", instructionF_std);
+        instructions.put("sub.s", instructionF_std);
+        instructions.put("sub.d", instructionF_std);
+        instructions.put("mul.s", instructionF_std);
+        instructions.put("mul.d", instructionF_std);
+        instructions.put("div.s", instructionF_std);
+        instructions.put("div.d", instructionF_std);
+
+        // FP branch
+        instructions.put("bc1f", instructionF_branch);
+        instructions.put("bc1t", instructionF_branch);
+        instructions.put("c.eq.s", instructionF_cflag);
+        instructions.put("c.eq.d", instructionF_cflag);
+        instructions.put("c.lt.s", instructionF_cflag);
+        instructions.put("c.lt.d", instructionF_cflag);
+        instructions.put("c.le.s", instructionF_cflag);
+        instructions.put("c.le.d", instructionF_cflag);
+
+        // FP load & store
+        instructions.put("lwc1", instructionF_SL);
+        instructions.put("ldc1", instructionF_SL);
+        instructions.put("swc1", instructionF_SL);
+        instructions.put("sdc1", instructionF_SL);
+
+
     }
 
     private void initRegisterCodes() {
@@ -131,10 +189,19 @@ public class Assembler {
         registers.put("$fp", "11110");
         // Return address
         registers.put("$ra", "11111");
+
+
+        // float Registers
+        for(int i=0 ; i<32 ; i++){
+            fsRegisters.put("$f"+i , parseUnsigned5BitBin(i));
+            if(i%2 == 0){ // double regs
+                fdRegisters.put("$f"+i , parseUnsigned5BitBin(i));
+            }
+        }
     }
 
     /**
-     * @param bitMode the bitMode to set
+     * @param modeBit the bitMode to set
      */
     public void setModeBit(boolean modeBit) {
         this.modeBit = modeBit;
@@ -320,7 +387,98 @@ public class Assembler {
             return opcode + address;
         }
     };
-	
+
+    // Instructions: add.s, sub.s, mul.s, div.s
+    // Instructions: add.d, sub.d, mul.d, div.d
+    private instructionParser instructionF_std = new instructionParser() {
+        public String parse(String[] parts) {
+
+            String opcode = "010001";
+            String type;  // double or single
+
+            String rs;
+            String rt;
+            String rd;
+
+            if(parts[0].endsWith(".d")){ // if is double
+                type = "00001";
+                rs = fdRegisters.get(parts[2]);
+                rt = fdRegisters.get(parts[3]);
+                rd = fdRegisters.get(parts[1]);
+            }
+            else{
+                type = "00000";
+                rs = fsRegisters.get(parts[2]);
+                rt = fsRegisters.get(parts[3]);
+                rd = fsRegisters.get(parts[1]);
+            }
+
+
+            String funct = instructionCodes.get(parts[0]);
+            System.out.println("assemble "+(opcode + type + rt + rs + rd + funct).length());
+            return opcode + type + rt + rs + rd + funct;
+        }
+    };
+
+    // Instructions: bc1f, bc1t
+    private instructionParser instructionF_branch = new instructionParser() {
+        public String parse(String[] parts) {
+            String opcode = "010001";
+            String isBranch = "01000";
+            String tOrF = (parts[0].equals("bc1f")) ? "00000" : "00001";
+            String immediate = parseSigned16BitBin(labels.get(parts[1]) - lineNumber - 1);
+            return opcode + isBranch + tOrF + immediate;
+        }
+    };
+
+    // Instructions: c.eq.s, c.lt.s, c.le.s
+    // Instructions: c.eq.d, c.lt.d, c.le.d
+    private instructionParser instructionF_cflag = new instructionParser() {
+        @Override
+        public String parse(String[] parts) {
+            String opcode = "010001";
+            String type;    // double or single
+            String fs;
+            String ft;
+            String funct = instructionCodes.get(parts[0]);
+
+            if(parts[0].endsWith(".d")){
+                type = "00001";
+                fs = fdRegisters.get(parts[1]);
+                ft = fdRegisters.get(parts[2]);
+            }
+            else{
+                type = "00000";
+                fs = fsRegisters.get(parts[1]);
+                ft = fsRegisters.get(parts[2]);
+            }
+
+            return opcode + type + ft + fs + "00000" + funct;
+
+        }
+    };
+
+    // Instructions:lwc1, swc1
+    // Instructions:ldc1, sdc1
+    private instructionParser instructionF_SL = new instructionParser() {
+        public String parse(String[] parts) {
+            String opcode = instructionCodes.get(parts[0]);
+            String fr;
+            String tr;
+            if(parts[0].equals("ldc1") || parts[0].equals("sdc1")){
+                fr = fdRegisters.get(parts[1]);
+                tr = getRegister(parts[3]);
+            }
+            else{
+                fr = fsRegisters.get(parts[1]);
+                tr = getRegister(parts[3]);
+            }
+            String immediate = parseSigned16BitBin(Integer.parseInt(parts[2]));
+            return opcode + tr + fr + immediate;
+
+        }
+    };
+
     private  instructionParser instructionSysCall = new instructionParser() {
         public String parse(String[] parts) {
             String opcode = "000000";
@@ -370,10 +528,11 @@ public class Assembler {
                 }
 
                 // Remove labels from the line
-                // This is done to check if line is empty & whether or not to
-                // increment line number)
+
                 line = line.replaceAll("^.+:([\\s]+)?", "");
 
+                // This is done to check if line is empty & whether or not to
+                // increment line number)
                 if (!line.isEmpty()) {
                     lineNumber++;
                 }
@@ -422,9 +581,10 @@ public class Assembler {
 	                    System.out.print((lineNumber + 1) + ": ");
 	                }
 	                // Parse and write instruction
-	                String ins = instructions.get(parts[0]).parse(parts);
+                    String ins = instructions.get(parts[0]).parse(parts);
 	                Instruction tmpIns = new Instruction(ins, parse8DigitHex(0x00000000 + 4 * lineNumber));
 	                assembled.put(lineNumber, tmpIns);
+                    notAssembled.put(lineNumber, line);
                 lineNumber++;
                 }
                 catch(Exception e)

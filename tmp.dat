@@ -1,6 +1,12 @@
-test:
-lw $a0,1,$zero
-addi $t0,$t0,3
-addi $t0,$t0,4
-addi $v0,$zero,10
-syscall
+lwc1 $f1, 0,$zero
+lwc1 $f2, 1,$zero
+add.s $f3,$f2,$f1
+add.s $f4,$f3,$f1
+c.eq.s $f3,$f4
+bc1t here
+c.eq.s $f3,$f3
+bc1t here
+add $a0, $a1, $a0
+here:
+swc1 $f3, 1,$zero
+lwc1 $f2, 1,$zero

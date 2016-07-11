@@ -12,12 +12,14 @@ public class SegmentDefragmenter {
 
     private ArrayList<String> Data_seg = new ArrayList<String>();
     private ArrayList<String> Code_seg = new ArrayList<String>();
+    public HashMap<Integer, Instruction> Code;
+    public HashMap<Integer, String> notAssembledCode;
     private String filePath;
     private String Data_seg_start_address;
     private String Data_seg_end_address;
     private String Code_seg_end_address;
     private String Code_seg_start_address;
-    private boolean isCode = false;
+    private boolean isCode = true;
     private boolean isData = false;
     private String tmp = "";
 
@@ -84,7 +86,6 @@ public class SegmentDefragmenter {
 
     public void programParser(File file) {
         Scanner scanner;
-        tmp = "";
         try {
             scanner = new Scanner(file);
             while (scanner.hasNextLine()) {
@@ -110,11 +111,11 @@ public class SegmentDefragmenter {
             }
             FileHandler.FileIO.TextTOFile(tmp, "tmp.dat");
             Assembler assemble = new Assembler();
-            HashMap<Integer, Instruction> res = new HashMap<Integer, Instruction>(assemble.assembleFile("tmp.dat"));
-            for (int i = 0; i < res.size() && res.get(i) != null; i++) {
-                Code_seg.add(res.get(i).getInstruction());
+            Code = new HashMap<Integer, Instruction>(assemble.assembleFile("tmp.dat"));
+            notAssembledCode = assemble.notAssembled;
+            for (int i = 0; i < Code.size() && Code.get(i) != null; i++) {
+                Code_seg.add(Code.get(i).getInstruction());
             }
-            res.clear();
             scanner.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -126,6 +127,41 @@ public class SegmentDefragmenter {
 //			Code_seg.add(line);
             tmp += line + System.lineSeparator();
         } else if (isData) {
+//             should handle data tag table
+            boolean isFloat = line.contains(".")? true : false;
+
+            String[] inLine = line.split("[\\s]+");
+            switch(inLine[0]){
+                case "dd":
+                    if(isFloat){
+                        line = Converts.floatToDoubleP(Double.valueOf(inLine[1]));
+                        while(line.length()<32)
+                            line = line+"0";
+
+                    }
+                    else{
+                        line = Long.toBinaryString(Long.valueOf(inLine[1]));
+                        while(line.length()<64){
+                            line = "0"+line;
+                        }
+                    }
+
+                    break;
+                case "dw":
+                    if(isFloat){
+                        line = Converts.floatToSingleP((Double.valueOf(inLine[1])).floatValue());
+                        while(line.length()<32)
+                            line = line+"0";
+                    }
+                    else{
+                        line = Integer.toBinaryString(Integer.valueOf(inLine[1]));
+                        while(line.length()<32)
+                            line = "0"+line;
+                    }
+                    break;
+
+            }
+
             Data_seg.add(line);
         }
     }

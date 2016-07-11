@@ -9,7 +9,7 @@ public class MEM_WB {
         /**
          * Data which was read from memory in MEM stage.
          */
-	int READ_DATA = 0;
+	String READ_DATA;
         /**
          * Result calculated by ALU in EXE stage.
          * For a R-Type Instruction.
@@ -25,12 +25,25 @@ public class MEM_WB {
          */
 	String controlBits;
 
+	String cp1_Result;
+
+
+	public String getCp1_Result() {
+		return cp1_Result;
+	}
+
+	public void setCp1_Result(String cp1_Result) {
+		this.cp1_Result = cp1_Result;
+	}
+
+
+
         
         /**
          * Data that has been read from Memory in MEM stage.
          * @return Data - an INT containing data, ALU_Result points to.
          */
-	public int getREAD_DATA() {
+	public String getREAD_DATA() {
 		return READ_DATA;
 	}
 
@@ -39,7 +52,7 @@ public class MEM_WB {
          * Set Data that was read fr
          * @param READ_DATA 
          */
-	public void setREAD_DATA(int READ_DATA) {
+	public void setREAD_DATA(String READ_DATA) {
 		this.READ_DATA = READ_DATA;
 	}
 

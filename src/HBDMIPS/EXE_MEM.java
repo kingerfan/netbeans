@@ -23,11 +23,15 @@ public class EXE_MEM {
          * Result of ALU
          */
 	int ALU_result;
+	/**
+	 * Result of CP1
+	 */
+	public String CP1_result;
         /**
          * Originally come from ID.
          * Data of RT Address Register determined in ID by RegisterFile
          */
-	int RT_DATA;
+	String RT_DATA;
         /**
          * Depending on I-Type or R-Type; In order its RT OR RD  
          */
@@ -94,14 +98,14 @@ public class EXE_MEM {
          * @return RT_DATA - Data stored in RT address Register 
          * moved in Pipeline.
          */
-	public int getRT_DATA() {
+	public String getRT_DATA() {
 		return RT_DATA;
 	}
         /**
          * 
          * @param rT_DATA - Dat that should be stored in RT_DATA.
          */
-	public void setRT_DATA(int rT_DATA) {
+	public void setRT_DATA(String rT_DATA) {
 		RT_DATA = rT_DATA;
 	}
         /**

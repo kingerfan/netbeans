@@ -8,8 +8,8 @@ addi $t0,$zero,10
 addi $v0,$zero,10
 syscall
 .data
-11
-12
-13
-14
-15
+dw 11
+dw 12
+dw 13
+dw 14
+dw 15

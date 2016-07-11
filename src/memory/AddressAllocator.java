@@ -9,8 +9,8 @@ public class AddressAllocator {
 	private HashMap<String, String> Memory = new HashMap<String, String>();
 	private HashMap<Integer, SegmentDefragmenter> Programs = new HashMap<Integer, SegmentDefragmenter>();
 	private int physicalAddress = 0;
-        
-               
+	int pNum = 0;
+
 	public HashMap<String, String> getMemory() {
 		return Memory;
 	}
@@ -21,8 +21,7 @@ public class AddressAllocator {
 
 	public AddressAllocator() {
 		Scanner scanner;
-		int physicalAddress = 0;
-		int pNum = 0;
+
 		try {
 			scanner = new Scanner(new File("MainMemory.dat"));
 			while (scanner.hasNextLine()) {
@@ -30,22 +29,7 @@ public class AddressAllocator {
 				if (file.isEmpty())
 					continue;
 				else {
-					SegmentDefragmenter sd = new SegmentDefragmenter(file);
-					Programs.put(pNum, sd);
-					sd.setCode_seg_start_address(parse8DigitHex(physicalAddress));
-					for (int i = 0; i < sd.getCode_seg().size(); i++) {
-						Memory.put(parse8DigitHex(physicalAddress), sd.getCode_seg().get(i));
-						physicalAddress++;
-					}
-					sd.setCode_seg_end_address(parse8DigitHex(physicalAddress - 1));
-					sd.setData_seg_start_address(parse8DigitHex(physicalAddress));
-					for (int i = 0; i < sd.getData_seg().size(); i++) {
-						Memory.put(parse8DigitHex(physicalAddress), sd
-								.getData_seg().get(i));
-						physicalAddress++;
-					}
-					sd.setData_seg_end_address(parse8DigitHex(physicalAddress-1));
-					pNum++;
+					allocator(file);
 				}
 			}
 			scanner.close();
@@ -62,11 +46,30 @@ public class AddressAllocator {
 		}
 	}
 
+	public void allocator(String file){
+		SegmentDefragmenter sd = new SegmentDefragmenter(file);
+		Programs.put(pNum, sd);
+		sd.setCode_seg_start_address(parse8DigitHex(physicalAddress));
+		for (int i = 0; i < sd.getCode_seg().size(); i++) {
+			Memory.put(parse8DigitHex(physicalAddress), sd.getCode_seg().get(i));
+			physicalAddress++;
+		}
+		sd.setCode_seg_end_address(parse8DigitHex(physicalAddress - 1));
+		sd.setData_seg_start_address(parse8DigitHex(physicalAddress));
+		for (int i = 0; i < sd.getData_seg().size(); i++) {
+			Memory.put(parse8DigitHex(physicalAddress), sd
+					.getData_seg().get(i));
+			physicalAddress++;
+		}
+		sd.setData_seg_end_address(parse8DigitHex(physicalAddress-1));
+		pNum++;
+	}
+
 	public static String parse8DigitHex(int dec) {
 		String hex = Integer.toHexString(0x00400000 + 4 * dec);
 		return hex;
 	}
-        public static String parse8DigitHexkernel(int dec) {
+	public static String parse8DigitHexkernel(int dec) {
 		String hex = Integer.toHexString(0x00000000 + 4 * dec);
 		return hex;
 	}
@@ -78,10 +81,10 @@ public class AddressAllocator {
 	public void setPrograms(HashMap<Integer, SegmentDefragmenter> programs) {
 		Programs = programs;
 	}
-        
-        public void printMemory(){
-            for (int i = 0; i < Memory.size(); i++) {
+
+	public void printMemory(){
+		for (int i = 0; i < Memory.size(); i++) {
 			System.out.println(parse8DigitHex(i) + " : "+ Memory.get(parse8DigitHex(i)));
 		}
-        }
+	}
 }
